@@ -129,5 +129,5 @@ dmypy.json
 .pyre/
 
 # model and image
-model/
-image/
+models/
+images/
