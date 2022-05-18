@@ -62,23 +62,12 @@ class Config:
 app = Flask(__name__)
 
 @app.route('/', methods=['GET'])
-def hello():
+def connectionTest():
     
-    return "Hello World"
+    return "Connection Establish"
 
 @app.route('/', methods=['POST'])
 def predict():
-    # configPath = "./models/model_vgg_config.pickle"
-    # weightPath = "./models/model_frcnn_vgg_weight.hdf5"
-    # imagePath = "./images/image1.jpg"
-
-    # print("---------------------------------")
-    # print("config path : ",configPath)
-    # print("weight path : ",weightPath)
-    # print("image path : ",imagePath)
-    # print("---------------------------------")
-
-    # catBreed, imageResultPath = identify(configPath, weightPath,imagePath)
     catBreed, imagePath = identify()
 
     data = {
@@ -89,11 +78,6 @@ def predict():
 
     jsonResult = json.dumps(data)
     return jsonResult
-
-@app.route('/test', methods=['POST'])
-def testing():
-    return "Test Post"
-
 
 if __name__ == '__main__':
     app.run(port=3000, debug=True)
