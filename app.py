@@ -1,7 +1,14 @@
-from flask import Flask
+import os
+from flask import Flask, request, jsonify, request
 import json
 from identificationModel import identify
 import pickle
+from PIL import Image 
+import io
+import base64
+
+UPLOAD_FOLDER = './images/'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 class Config:
 
@@ -60,13 +67,11 @@ class Config:
 		self.model_path = None
 
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-@app.route('/', methods=['GET'])
-def connectionTest():
-    
-    return "Connection Establish"
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@app.route('/', methods=['POST'])
 def predict():
     catBreed, imagePath = identify()
 
@@ -79,5 +84,28 @@ def predict():
     jsonResult = json.dumps(data)
     return jsonResult
 
+@app.route('/', methods=['GET'])
+def connectionTest():
+    data = {
+        "test" : "Connection Establish"
+    }
+
+    jsonResult = json.dumps(data)
+    return jsonResult
+
+@app.route('/upload', methods=['POST'])
+def index() :
+	json_req = request.get_json()
+	bytesOfImage = json_req['image']
+	imageData = base64.b64decode(bytesOfImage)
+
+	img = Image.open(io.BytesIO(imageData))
+	img.save('images/image1.jpg')
+	succesMessage = {
+		"message": "file berhasil disimpan"
+	}
+	jsonResult = json.dumps(succesMessage)
+	return jsonResult
+
 if __name__ == '__main__':
-    app.run(port=3000, debug=True)
+    app.run(host = '192.168.100.155', port=3000, debug=True)
