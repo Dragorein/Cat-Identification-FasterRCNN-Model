@@ -1173,8 +1173,10 @@ def identify():
 			
             resultPath = './image/resultImage.jpg'
             cv2.imwrite(resultPath, img)
-    
-    return(all_dets, resultPath)
+    if all_dets:
+        return(all_dets, resultPath)
+    else :
+        return(all_dets, "")
 
 def main():
     resultValue, resultImagePath = identify()

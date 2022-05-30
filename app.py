@@ -1,7 +1,9 @@
 import os
-from flask import Flask, request, jsonify, request
+from time import sleep
+from flask import Flask, request, jsonify, request, session
 import json
 from identificationModel import identify
+from information import *
 import pickle
 from PIL import Image 
 import io
@@ -72,18 +74,6 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def predict():
-    catBreed, imagePath = identify()
-
-    data = {
-        "predictionBreed" : catBreed[0][0],
-        "predictionAccuracy" : catBreed[0][1],
-        "imagePath" : imagePath
-    }
-
-    jsonResult = json.dumps(data)
-    return jsonResult
-
 @app.route('/', methods=['GET'])
 def connectionTest():
     data = {
@@ -93,19 +83,49 @@ def connectionTest():
     jsonResult = json.dumps(data)
     return jsonResult
 
-@app.route('/upload', methods=['POST'])
-def index() :
-	json_req = request.get_json()
-	bytesOfImage = json_req['image']
-	imageData = base64.b64decode(bytesOfImage)
+@app.route('/predict', methods=['POST'])
+def predict():
+    json_req = request.get_json()
+    bytesOfImage = json_req['image']
+    imageData = base64.b64decode(bytesOfImage)
 
-	img = Image.open(io.BytesIO(imageData))
-	img.save('images/image1.jpg')
-	succesMessage = {
-		"message": "file berhasil disimpan"
-	}
-	jsonResult = json.dumps(succesMessage)
-	return jsonResult
+    img = Image.open(io.BytesIO(imageData))
+    img.save('images/image1.jpg')
+    catBreed,resultPath = identify()
+    if resultPath == "": 
+        with open('./images/image1.jpg', "rb") as image_file:
+            no_cat = base64.b64encode(image_file.read())
+        data = none(no_cat)
+    else :
+        with open(resultPath, "rb") as image_file:
+            encoded_string = base64.b64encode(image_file.read())
+        if (catBreed[0][0] == 'Abyssinian'):
+            data = Abyssnian(catBreed[0][1], encoded_string)
+        elif (catBreed[0][0] == 'Bengal'):
+            data = Bengal(catBreed[0][1], encoded_string)
+        elif (catBreed[0][0] == 'Birman'):
+            data = Birman(catBreed[0][1], encoded_string)
+        elif (catBreed[0][0] == 'Bombay'):
+            data = Bombay(catBreed[0][1], encoded_string)
+        elif (catBreed[0][0] == 'BrithShorthair'):
+            data = BritishShorthair(catBreed[0][1], encoded_string)
+        elif (catBreed[0][0] == 'EgyptianMau'):
+            data = EgyptianMau(catBreed[0][1], encoded_string)
+        elif (catBreed[0][0] == 'MaineCoon'):
+            data = MaineCoon(catBreed[0][1], encoded_string)
+        elif (catBreed[0][0] == 'Persian'):
+            data = Persian(catBreed[0][1], encoded_string)
+        elif (catBreed[0][0] == 'Ragdoll'):
+            data = Ragdoll(catBreed[0][1], encoded_string)
+        elif (catBreed[0][0] == 'RussianBlue'):
+            data = RussianBlue(catBreed[0][1], encoded_string)
+        elif (catBreed[0][0] == 'Siamese'):
+            data = Siamese(catBreed[0][1], encoded_string)
+        elif (catBreed[0][0] == 'Sphynx'):
+            data = Sphynx(catBreed[0][1], encoded_string)
+
+    jsonResult = json.dumps(data)
+    return jsonResult
 
 if __name__ == '__main__':
     app.run(host = '192.168.100.155', port=3000, debug=True)
