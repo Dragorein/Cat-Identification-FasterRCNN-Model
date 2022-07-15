@@ -128,4 +128,4 @@ def predict():
     return jsonResult
 
 if __name__ == '__main__':
-    app.run(host = '192.168.100.155', port=3000, debug=True)
+    app.run(host = '192.168.100.208', port=3000, debug=True)

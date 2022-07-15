@@ -1171,7 +1171,7 @@ def identify():
             cv2.rectangle(img, (textOrg[0] - 5,textOrg[1]+baseLine - 5), (textOrg[0]+retval[0] + 5, textOrg[1]-retval[1] - 5), (255, 255, 255), -1)
             cv2.putText(img, textLabel, textOrg, cv2.FONT_HERSHEY_DUPLEX, 1, (0, 0, 0), 1)
 			
-            resultPath = './image/resultImage.jpg'
+            resultPath = './images/resultImage.jpg'
             cv2.imwrite(resultPath, img)
     if all_dets:
         return(all_dets, resultPath)
